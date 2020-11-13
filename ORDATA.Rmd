@@ -58,13 +58,13 @@ ggplot(fresh_primo, aes(age, frequency))+
 ```
 
 ```{r}
-
-fresh_primo %>% 
-  filter(disability=="AUTISM") %>% 
+#hiding this for now
+#fresh_primo %>% 
+ # filter(disability=="AUTISM") %>% 
   
-ggplot(aes(age, frequency))+
-  geom_line(aes(color=disability))+
-  facet_wrap(~year)
+#ggplot(aes(age, frequency))+
+#  geom_line(aes(color=disability))+
+ # facet_wrap(~year)
 
 ```
 
