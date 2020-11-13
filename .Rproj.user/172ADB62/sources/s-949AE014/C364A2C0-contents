@@ -1,0 +1,70 @@
+---
+title: "or_sped"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+library("readxl")
+primodata <- read_excel(here("data", "primo_merged_oregon_data.xlsx"))
+cleanest_primo <-primodata %>% 
+  remove_empty(which = c("rows", "cols")) %>% 
+  clean_names()
+
+```
+
+```{r}
+cleanest_primo <- cleanest_primo %>% 
+  select(-six_to_twentyone_total, -x24)
+
+
+```
+
+```{r}
+cleanest_primo2 <- cleanest_primo [!(cleanest_primo$disability=="TOTAL (SUM OF ALL OF THE ABOVE)" |cleanest_primo$disability=="OTHER HEALTH IMPAIRMENT" | cleanest_primo$disability=="SPECIFIC LEARNING DISABILITY" | cleanest_primo$disability=="SPECIFIC LEARNING DISABILITY"),]
+cleanest_primo2
+
+```
+
+```{r}
+fresh_primo <- cleanest_primo2 %>% 
+  pivot_longer(starts_with("x"), names_to = "age", values_to = "frequency") %>% 
+  mutate(age = parse_number(age), 
+         year = parse_number(year))
+
+```
+
+```{r}
+fresh_primo %>% 
+  group_by(year, disability) %>% 
+  summarize(total=sum(frequency, na.rm=TRUE))
+```
+
+```{r}
+ggplot(fresh_primo, aes(age, frequency))+
+  geom_line(aes(color=disability))+
+  facet_wrap(~year)
+
+
+```
+
+```{r}
+#hiding this for now
+#fresh_primo %>% 
+ # filter(disability=="AUTISM") %>% 
+  
+#ggplot(aes(age, frequency))+
+#  geom_line(aes(color=disability))+
+ # facet_wrap(~year)
+
+```
+
